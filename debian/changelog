@@ -1,8 +1,12 @@
-unbound (1.15.0-11) UNRELEASED; urgency=medium
+unbound (1.15.0-11deepin1) unstable; urgency=medium
 
+  [ unbound packagers ]
   * update
 
- -- unbound packagers <unbound@packages.debian.org>  Mon, 06 Jun 2022 21:17:27 +0800
+  [ Tianyu Chen ]
+  * No source change upload against python 3.12.
+
+ -- Tianyu Chen <sweetyfish@deepin.org>  Mon, 08 Jul 2024 09:58:22 +0200
 
 unbound (1.15.0-11) unstable; urgency=medium
 
