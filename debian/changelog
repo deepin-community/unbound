@@ -1,12 +1,211 @@
-unbound (1.15.0-11deepin1) unstable; urgency=medium
+unbound (1.23.1-1) unstable; urgency=medium
 
-  [ unbound packagers ]
-  * update
+  * new upstream release
+  * d/apparmor-profile: remove sssd path which is in apparmor base
+    for a very long time
+  * Fix-RebirthDay-Attack-CVE-2025-5994.patch: remove
 
-  [ Tianyu Chen ]
-  * No source change upload against python 3.12.
+ -- Michael Tokarev <mjt@tls.msk.ru>  Sun, 24 Aug 2025 12:37:28 +0300
 
- -- Tianyu Chen <sweetyfish@deepin.org>  Mon, 08 Jul 2024 09:58:22 +0200
+unbound (1.22.0-2) unstable; urgency=medium
+
+  * add Fix-RebirthDay-Attack-CVE-2025-5994.patch from upstream
+    (Closes: #1109427, CVE-2025-5994)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 17 Jul 2025 19:05:22 +0300
+
+unbound (1.22.0-1) unstable; urgency=medium
+
+  * new upstream release (1.22.0)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Sat, 19 Oct 2024 13:11:14 +0300
+
+unbound (1.21.1-1) unstable; urgency=medium
+
+  * new upstream release 1.21.1
+    Closes: #1078647, CVE-2024-43167 (NULL ptr deref in ub_ctx_set_fwd)
+    Closes: #1083282, CVE-2024-8508 (Unbounded name compression)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Fri, 04 Oct 2024 17:48:04 +0300
+
+unbound (1.20.0-1) unstable; urgency=medium
+
+  * new upstream release with some new features and many bugfixes
+    Closes: CVE-2024-33655 (DNSBomb issue)
+  * remove do-not-look-at-pidfile.patch now once upstream
+    stopped chowning the pidfile
+  * +spelling-overriden.patch
+  * d/rules: enable -j in MAKEFLAGS when parallel is in DEB_BUILD_OPTIONS
+  * d/control: Standards-Version: 4.6.0=>4.6.2
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 09 May 2024 14:47:04 +0300
+
+unbound (1.19.2-1) unstable; urgency=medium
+
+  * new upstream bugfix release. Closes: CVE-2024-1931,
+    denial of service when trimming EDE text on positive replies
+  * d/changelog: add the forgotten Closes for
+    #1063845, #1051817, #1051818, #1056631 to the previous
+    changelog entry
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 07 Mar 2024 23:35:52 +0300
+
+unbound (1.19.1-1) unstable; urgency=medium
+
+  * new upstream bugfix release (1.19.1) (Closes: #1063845):
+   o Fix CVE-2023-50387, DNSSEC verification complexity can be exploited
+     to exhaust CPU resources and stall DNS resolvers
+   o Fix CVE-2023-50868, NSEC3 closest encloser proof can exhaust CPU
+  * new upstream release (1.19.0) (Closes: #1051817, #1051818, #1056631)
+  * d/control: Build-Depends: pkg-config => pkgconf
+  * d/unbound.lintian-overrides: remove
+    package-supports-alternative-init-but-no-init.d-script
+  * d/unbound.lintian-overrides: adjust for /lib=>/usr/lib move
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 13 Feb 2024 22:40:40 +0300
+
+unbound (1.18.0-2) unstable; urgency=medium
+
+   * d/resolvconf-forwards: remove -e (Closes: #1035800), shorten sed expr
+   * d/changelog: mention #1013957 in previous changelog entry
+   * d/control, d/rules: switch from libnettle back to libssl once it is
+     GPL-compatible (#828699 is of no concern anymore).  This fixes libunbound
+     init failure.  Also Closes: #1007260
+   * d/control, d/rules: build daemon with --enable-cachedb --with-libhiredis,
+     build-depend on libhiredis-dev (Closes: #1014456)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 06 Sep 2023 16:34:32 +0300
+
+unbound (1.18.0-1) unstable; urgency=medium
+
+  * new upstream release
+    Closes: #1038243
+  * d/copyright: relicense debian/patches/* under ISC license
+    (Closes: #1013957)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Mon, 04 Sep 2023 09:41:58 +0300
+
+unbound (1.17.1-2) unstable; urgency=medium
+
+  * unbound-helper: return 0 explicitly in a few places
+    (Closes: #1019140)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Sun, 09 Apr 2023 15:59:14 +0300
+
+unbound (1.17.1-1) unstable; urgency=medium
+
+  [ Michael Tokarev ]
+  * new upstream release. Release notes:
+
+    This release fixes a number of bugs. There are also new configuration
+    options that by default do not change the existing behaviour of Unbound.
+
+    With `statistics-inhibit-zero` the printout of zero values by stats can
+    be controlled. Similarly with `max-sent-count` and `max-query-restarts`
+    the iterator behaviour can be controlled. The maximum CNAME chain length
+    that is accepted can be changed by increasing the `max-query-restarts`
+    number. This takes more time to follow those elements.
+
+    The keep-cache option allows reloads to change configuration whilst
+    keeping the cache memory intact, making the cache hot for good response
+    times after the change has completed.
+
+    The release contains an additional fix for service downgrade due to
+    wrong hash values for wildcards in a hyperlocal zone, that was reported
+    by Sergey Kacheev.
+
+    Features
+    - Expose 'statistics-inhibit-zero' as a configuration option; the
+      default value retains Unbound's behavior.
+    - Expose 'max-sent-count' as a configuration option; the
+      default value retains Unbound's behavior.
+    - Merge #461 from Christian Allred: Add max-query-restarts option.
+      Exposes an internal configuration but the default value retains
+      Unbound's behavior.
+    - Merge #569 from JINMEI Tatuya: add keep-cache option to
+      'unbound-control reload' to keep caches.
+
+    Bug Fixes
+    - Merge #768 from fobser: Arithmetic on a pointer to void is a GNU
+      extension.
+    - In unit test, print python script name list correctly.
+    - testcode/dohclient sets log identity to its name.
+    - Clarify the use of MAX_SENT_COUNT in the iterator code.
+    - Fix that cachedb does not store failures in the external cache.
+    - Merge #767 from jonathangray: consistently use IPv4/IPv6 in
+      unbound.conf.5.
+    - Fix to ignore tcp events for closed comm points.
+    - Fix to make sure to not read again after a tcp comm point is closed.
+    - Fix #775: libunbound: subprocess reap causes parent process reap
+      to hang.
+    - iana portlist update.
+    - Complementary fix for distutils.sysconfig deprecation in Python 3.10
+      to commit 62c5039ab9da42713e006e840b7578e01d66e7f2.
+    - Fix #779: [doc] Missing documentation in ub_resolve_event() for
+      callback parameter was_ratelimited.
+    - Ignore expired error responses.
+    - Merge #720 from jonathangray: fix use after free when
+      WSACreateEvent() fails.
+    - Fix for the ignore of tcp events for closed comm points, preserve
+      the use after free protection features.
+    - Fix #782: Segmentation fault in stats.c:404.
+    - Add SVCB and HTTPS to the types removed by 'unbound-control flush'.
+    - Clear documentation for interactivity between the subnet module and
+      the serve-expired and prefetch configuration options.
+    - Fix #773: When used with systemd-networkd, unbound does not start
+      until systemd-networkd-wait-online.service times out.
+    - Merge #808: Wrap Makefile script's directory variables in quotes.
+    - Fix to wrap Makefile scripts directory in quotes for uninstall.
+    - Fix windows compile for libunbound subprocess reap comm point closes.
+    - Update github workflows to use checkout v3.
+    - Fix wildcard in hyperlocal zone service degradation, reported
+      by Sergey Kacheev.
+
+  * lintian-overrides fixes/additions
+
+  [ Helmut Grohne ]
+  * Fix FTCBFS: export _PYTHON_SYSCONFIGDATA_NAME. (Closes: #1024422)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 12 Jan 2023 18:28:54 +0300
+
+unbound (1.17.0-1) unstable; urgency=medium
+
+  * new upstream release
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 13 Oct 2022 14:01:15 +0300
+
+unbound (1.16.3-1) unstable; urgency=medium
+
+  * new upstream minor release with the following change:
+   - Patch for CVE-2022-3204 Non-Responsive Delegation Attack
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 21 Sep 2022 13:21:43 +0300
+
+unbound (1.16.2-1) unstable; urgency=medium
+
+  * new upstream minor release with many bugfixes and 2 features.
+    Closes: #1016493, CVE-2022-30698, CVE-2022-30699
+  * d/unbound.docs: install doc/Changelog file
+  * d/copyright: mark debian/patches/* as GPL-2 (#1013957)
+    (not closing the bug since it is more than d/patches/)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Fri, 12 Aug 2022 12:57:33 +0300
+
+unbound (1.16.0-2) unstable; urgency=medium
+
+  * revert the python path change in previous upload, and set python
+    module directory explicitly to /usr/lib/python3/dist-packages/.
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 02 Jun 2022 19:35:26 +0300
+
+unbound (1.16.0-1) unstable; urgency=medium
+
+  * update to the new upstream release.
+    Highlight this time is basic support for EDE (RFC8914)
+  * removed patches applied upstream
+  * updated paths for python modules (usr/lib/python3.M/site-packages/)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 02 Jun 2022 18:28:14 +0300
 
 unbound (1.15.0-11) unstable; urgency=medium
 

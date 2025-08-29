@@ -4,22 +4,22 @@
  * Copyright (c) 2007, NLnet Labs. All rights reserved.
  *
  * This software is open source.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the NLNET LABS nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -70,6 +70,9 @@
 #include <openssl/ssl.h>
 #endif
 
+/** How long to wait for threads to transmit statistics, in msec. */
+#define STATS_THREAD_WAIT 60000
+
 /** add timers and the values do not overflow or become negative */
 static void
 stats_timeval_add(long long* d_sec, long long* d_usec, long long add_sec, long long add_usec)
@@ -113,8 +116,8 @@ void server_stats_log(struct ub_server_stats* stats, struct worker* worker,
 	log_info("server stats for thread %d: %u queries, "
 		"%u answers from cache, %u recursions, %u prefetch, %u rejected by "
 		"ip ratelimiting",
-		threadnum, (unsigned)stats->num_queries, 
-		(unsigned)(stats->num_queries - 
+		threadnum, (unsigned)stats->num_queries,
+		(unsigned)(stats->num_queries -
 			stats->num_queries_missed_cache),
 		(unsigned)stats->num_queries_missed_cache,
 		(unsigned)stats->num_queries_prefetch,
@@ -276,11 +279,18 @@ server_stats_compile(struct worker* worker, struct ub_stats_info* s, int reset)
 		s->svr.ans_rcode[i] += (long long)worker->env.mesh->ans_rcode[i];
 	for(i=0; i<UB_STATS_RPZ_ACTION_NUM; i++)
 		s->svr.rpz_action[i] += (long long)worker->env.mesh->rpz_action[i];
-	timehist_export(worker->env.mesh->histogram, s->svr.hist, 
+	timehist_export(worker->env.mesh->histogram, s->svr.hist,
 		NUM_BUCKETS_HIST);
+	s->svr.num_queries_discard_timeout +=
+		(long long)worker->env.mesh->num_queries_discard_timeout;
+	s->svr.num_queries_wait_limit +=
+		(long long)worker->env.mesh->num_queries_wait_limit;
+	s->svr.num_dns_error_reports +=
+		(long long)worker->env.mesh->num_dns_error_reports;
 	/* values from outside network */
 	s->svr.unwanted_replies = (long long)worker->back->unwanted_replies;
 	s->svr.qtcp_outgoing = (long long)worker->back->num_tcp_outgoing;
+	s->svr.qudp_outgoing = (long long)worker->back->num_udp_outgoing;
 
 	/* get and reset validator rrset bogus number */
 	s->svr.rrset_bogus = (long long)get_rrset_bogus(worker, reset);
@@ -289,8 +299,10 @@ server_stats_compile(struct worker* worker, struct ub_stats_info* s, int reset)
 	s->svr.queries_ratelimited = (long long)get_queries_ratelimit(worker, reset);
 
 	/* get cache sizes */
-	s->svr.msg_cache_count = (long long)count_slabhash_entries(worker->env.msg_cache);
-	s->svr.rrset_cache_count = (long long)count_slabhash_entries(&worker->env.rrset_cache->table);
+	get_slabhash_stats(worker->env.msg_cache,
+		&s->svr.msg_cache_count, &s->svr.msg_cache_max_collisions);
+	get_slabhash_stats(&worker->env.rrset_cache->table,
+		&s->svr.rrset_cache_count, &s->svr.rrset_cache_max_collisions);
 	s->svr.infra_cache_count = (long long)count_slabhash_entries(worker->env.infra_cache->hosts);
 	if(worker->env.key_cache)
 		s->svr.key_cache_count = (long long)count_slabhash_entries(worker->env.key_cache->slab);
@@ -319,20 +331,8 @@ server_stats_compile(struct worker* worker, struct ub_stats_info* s, int reset)
 	s->svr.num_query_dnscrypt_replay = 0;
 #endif /* USE_DNSCRYPT */
 	if(worker->env.auth_zones) {
-		if(reset && !worker->env.cfg->stat_cumulative) {
-			lock_rw_wrlock(&worker->env.auth_zones->lock);
-		} else {
-			lock_rw_rdlock(&worker->env.auth_zones->lock);
-		}
-		s->svr.num_query_authzone_up = (long long)worker->env.
-			auth_zones->num_query_up;
-		s->svr.num_query_authzone_down = (long long)worker->env.
-			auth_zones->num_query_down;
-		if(reset && !worker->env.cfg->stat_cumulative) {
-			worker->env.auth_zones->num_query_up = 0;
-			worker->env.auth_zones->num_query_down = 0;
-		}
-		lock_rw_unlock(&worker->env.auth_zones->lock);
+		s->svr.num_query_authzone_up += (long long)worker->env.mesh->num_query_authzone_up;
+		s->svr.num_query_authzone_down += (long long)worker->env.mesh->num_query_authzone_down;
 	}
 	s->svr.mem_stream_wait =
 		(long long)tcp_req_info_get_stream_buffer_size();
@@ -340,6 +340,12 @@ server_stats_compile(struct worker* worker, struct ub_stats_info* s, int reset)
 		(long long)http2_get_query_buffer_size();
 	s->svr.mem_http2_response_buffer =
 		(long long)http2_get_response_buffer_size();
+#ifdef HAVE_NGTCP2
+	s->svr.mem_quic = (long long)doq_table_quic_size_get(
+		worker->daemon->doq_table);
+#else
+	s->svr.mem_quic = 0;
+#endif /* HAVE_NGTCP2 */
 
 	/* Set neg cache usage numbers */
 	set_neg_cache_stats(worker, &s->svr, reset);
@@ -349,6 +355,11 @@ server_stats_compile(struct worker* worker, struct ub_stats_info* s, int reset)
 #else
 	s->svr.num_query_subnet = 0;
 	s->svr.num_query_subnet_cache = 0;
+#endif
+#ifdef USE_CACHEDB
+	s->svr.num_query_cachedb = (long long)worker->env.mesh->ans_cachedb;
+#else
+	s->svr.num_query_cachedb = 0;
 #endif
 
 	/* get tcp accept usage */
@@ -379,6 +390,35 @@ void server_stats_obtain(struct worker* worker, struct worker* who,
 		worker_send_cmd(who, worker_cmd_stats);
 	else 	worker_send_cmd(who, worker_cmd_stats_noreset);
 	verbose(VERB_ALGO, "wait for stats reply");
+	if(tube_wait_timeout(worker->cmd, STATS_THREAD_WAIT) == 0) {
+#if defined(HAVE_PTHREAD) && defined(SIZEOF_PTHREAD_T) && defined(SIZEOF_UNSIGNED_LONG)
+#  if SIZEOF_PTHREAD_T == SIZEOF_UNSIGNED_LONG
+		unsigned long pthid = 0;
+		if(verbosity >= VERB_OPS)
+			memcpy(&pthid, &who->thr_id, sizeof(unsigned long));
+#  endif
+#endif
+		verbose(VERB_OPS, "no response from thread %d"
+#ifdef HAVE_GETTID
+			" LWP %u"
+#endif
+#if defined(HAVE_PTHREAD) && defined(SIZEOF_PTHREAD_T) && defined(SIZEOF_UNSIGNED_LONG)
+#  if SIZEOF_PTHREAD_T == SIZEOF_UNSIGNED_LONG
+			" pthread 0x%lx"
+#  endif
+#endif
+			,
+			who->thread_num
+#ifdef HAVE_GETTID
+			, (unsigned)who->thread_tid
+#endif
+#if defined(HAVE_PTHREAD) && defined(SIZEOF_PTHREAD_T) && defined(SIZEOF_UNSIGNED_LONG)
+#  if SIZEOF_PTHREAD_T == SIZEOF_UNSIGNED_LONG
+			, pthid
+#  endif
+#endif
+			);
+	}
 	if(!tube_read_msg(worker->cmd, &reply, &len, 0))
 		fatal_exit("failed to read stats over cmd channel");
 	if(len != (uint32_t)sizeof(*s))
@@ -393,7 +433,7 @@ void server_stats_reply(struct worker* worker, int reset)
 	struct ub_stats_info s;
 	server_stats_compile(worker, &s, reset);
 	verbose(VERB_ALGO, "write stats replymsg");
-	if(!tube_write_msg(worker->daemon->workers[0]->cmd, 
+	if(!tube_write_msg(worker->daemon->workers[0]->cmd,
 		(uint8_t*)&s, sizeof(s), 0))
 		fatal_exit("could not write stat values over cmd channel");
 }
@@ -402,16 +442,28 @@ void server_stats_add(struct ub_stats_info* total, struct ub_stats_info* a)
 {
 	total->svr.num_queries += a->svr.num_queries;
 	total->svr.num_queries_ip_ratelimited += a->svr.num_queries_ip_ratelimited;
+	total->svr.num_queries_cookie_valid += a->svr.num_queries_cookie_valid;
+	total->svr.num_queries_cookie_client += a->svr.num_queries_cookie_client;
+	total->svr.num_queries_cookie_invalid += a->svr.num_queries_cookie_invalid;
+	total->svr.num_queries_discard_timeout +=
+		a->svr.num_queries_discard_timeout;
+	total->svr.num_queries_wait_limit += a->svr.num_queries_wait_limit;
+	total->svr.num_dns_error_reports += a->svr.num_dns_error_reports;
 	total->svr.num_queries_missed_cache += a->svr.num_queries_missed_cache;
 	total->svr.num_queries_prefetch += a->svr.num_queries_prefetch;
+	total->svr.num_queries_timed_out += a->svr.num_queries_timed_out;
+	total->svr.num_query_authzone_up += a->svr.num_query_authzone_up;
+	total->svr.num_query_authzone_down += a->svr.num_query_authzone_down;
+	if (total->svr.max_query_time_us < a->svr.max_query_time_us)
+		total->svr.max_query_time_us = a->svr.max_query_time_us;
 	total->svr.sum_query_list_size += a->svr.sum_query_list_size;
 	total->svr.ans_expired += a->svr.ans_expired;
 #ifdef USE_DNSCRYPT
 	total->svr.num_query_dnscrypt_crypted += a->svr.num_query_dnscrypt_crypted;
 	total->svr.num_query_dnscrypt_cert += a->svr.num_query_dnscrypt_cert;
-	total->svr.num_query_dnscrypt_cleartext += \
+	total->svr.num_query_dnscrypt_cleartext +=
 		a->svr.num_query_dnscrypt_cleartext;
-	total->svr.num_query_dnscrypt_crypted_malformed += \
+	total->svr.num_query_dnscrypt_crypted_malformed +=
 		a->svr.num_query_dnscrypt_crypted_malformed;
 #endif /* USE_DNSCRYPT */
 	/* the max size reached is upped to higher of both */
@@ -424,9 +476,11 @@ void server_stats_add(struct ub_stats_info* total, struct ub_stats_info* a)
 		total->svr.qclass_big += a->svr.qclass_big;
 		total->svr.qtcp += a->svr.qtcp;
 		total->svr.qtcp_outgoing += a->svr.qtcp_outgoing;
+		total->svr.qudp_outgoing += a->svr.qudp_outgoing;
 		total->svr.qtls += a->svr.qtls;
 		total->svr.qtls_resume += a->svr.qtls_resume;
 		total->svr.qhttps += a->svr.qhttps;
+		total->svr.qquic += a->svr.qquic;
 		total->svr.qipv6 += a->svr.qipv6;
 		total->svr.qbit_QR += a->svr.qbit_QR;
 		total->svr.qbit_AA += a->svr.qbit_AA;
@@ -444,6 +498,9 @@ void server_stats_add(struct ub_stats_info* total, struct ub_stats_info* a)
 		total->svr.unwanted_replies += a->svr.unwanted_replies;
 		total->svr.unwanted_queries += a->svr.unwanted_queries;
 		total->svr.tcp_accept_usage += a->svr.tcp_accept_usage;
+#ifdef USE_CACHEDB
+		total->svr.num_query_cachedb += a->svr.num_query_cachedb;
+#endif
 		for(i=0; i<UB_STATS_QTYPE_NUM; i++)
 			total->svr.qtype[i] += a->svr.qtype[i];
 		for(i=0; i<UB_STATS_QCLASS_NUM; i++)
@@ -483,18 +540,23 @@ void server_stats_insquery(struct ub_server_stats* stats, struct comm_point* c,
 	else	stats->qclass_big++;
 	stats->qopcode[ LDNS_OPCODE_WIRE(sldns_buffer_begin(c->buffer)) ]++;
 	if(c->type != comm_udp) {
-		stats->qtcp++;
+		if(c->type != comm_doq)
+			stats->qtcp++;
 		if(c->ssl != NULL) {
 			stats->qtls++;
 #ifdef HAVE_SSL
-			if(SSL_session_reused(c->ssl)) 
+			if(SSL_session_reused(c->ssl))
 				stats->qtls_resume++;
 #endif
 			if(c->type == comm_http)
 				stats->qhttps++;
+#ifdef HAVE_NGTCP2
+			else if(c->type == comm_doq)
+				stats->qquic++;
+#endif
 		}
 	}
-	if(repinfo && addr_is_ip6(&repinfo->addr, repinfo->addrlen))
+	if(repinfo && addr_is_ip6(&repinfo->remote_addr, repinfo->remote_addrlen))
 		stats->qipv6++;
 	if( (flags&BIT_QR) )
 		stats->qbit_QR++;
@@ -526,5 +588,18 @@ void server_stats_insrcode(struct ub_server_stats* stats, sldns_buffer* buf)
 		stats->ans_rcode[r] ++;
 		if(r == 0 && LDNS_ANCOUNT( sldns_buffer_begin(buf) ) == 0)
 			stats->ans_rcode_nodata ++;
+	}
+}
+
+void server_stats_downstream_cookie(struct ub_server_stats* stats,
+	struct edns_data* edns)
+{
+	if(!(edns->edns_present && edns->cookie_present)) return;
+	if(edns->cookie_valid) {
+		stats->num_queries_cookie_valid++;
+	} else if(edns->cookie_client) {
+		stats->num_queries_cookie_client++;
+	} else {
+		stats->num_queries_cookie_invalid++;
 	}
 }
