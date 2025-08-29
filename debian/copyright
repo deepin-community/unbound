@@ -54,6 +54,10 @@ License: GPL-3
  On Debian systems, the full text of the GNU General Public License
  version 3 can be found in the file `/usr/share/common-licenses/GPL-3'.
 
+Files: debian/patches/*
+Copyright: 2022-2023 Michael Tokarev
+License: ISC
+
 Files: compat/arc4random.c
        compat/arc4random_uniform.c
 Copyright: 1996 David Mazieres <dm@uun.org>

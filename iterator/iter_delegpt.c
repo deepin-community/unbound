@@ -78,6 +78,7 @@ struct delegpt* delegpt_copy(struct delegpt* dp, struct regional* region)
 		if(!delegpt_add_ns(copy, region, ns->name, ns->lame,
 			ns->tls_auth_name, ns->port))
 			return NULL;
+		copy->nslist->cache_lookup_count = ns->cache_lookup_count;
 		copy->nslist->resolved = ns->resolved;
 		copy->nslist->got4 = ns->got4;
 		copy->nslist->got6 = ns->got6;
@@ -121,6 +122,7 @@ delegpt_add_ns(struct delegpt* dp, struct regional* region, uint8_t* name,
 	ns->namelen = len;
 	dp->nslist = ns;
 	ns->name = regional_alloc_init(region, name, ns->namelen);
+	ns->cache_lookup_count = 0;
 	ns->resolved = 0;
 	ns->got4 = 0;
 	ns->got6 = 0;
@@ -185,6 +187,10 @@ delegpt_add_target(struct delegpt* dp, struct regional* region,
 		else	ns->got4 = 1;
 		if(ns->got4 && ns->got6)
 			ns->resolved = 1;
+	} else {
+		if(addr_is_ip6(addr, addrlen))
+			ns->done_pside6 = 1;
+		else	ns->done_pside4 = 1;
 	}
 	log_assert(ns->port>0);
 	return delegpt_add_addr(dp, region, addr, addrlen, bogus, lame,
@@ -272,7 +278,7 @@ delegpt_count_addr(struct delegpt* dp, size_t* numaddr, size_t* numres,
 
 void delegpt_log(enum verbosity_value v, struct delegpt* dp)
 {
-	char buf[LDNS_MAX_DOMAINLEN+1];
+	char buf[LDNS_MAX_DOMAINLEN];
 	struct delegpt_ns* ns;
 	struct delegpt_addr* a;
 	size_t missing=0, numns=0, numaddr=0, numres=0, numavail=0;
@@ -315,6 +321,45 @@ void delegpt_log(enum verbosity_value v, struct delegpt* dp)
 	}
 }
 
+int
+delegpt_addr_on_result_list(struct delegpt* dp, struct delegpt_addr* find)
+{
+	struct delegpt_addr* a = dp->result_list;
+	while(a) {
+		if(a == find)
+			return 1;
+		a = a->next_result;
+	}
+	return 0;
+}
+
+void
+delegpt_usable_list_remove_addr(struct delegpt* dp, struct delegpt_addr* del)
+{
+	struct delegpt_addr* usa = dp->usable_list, *prev = NULL;
+	while(usa) {
+		if(usa == del) {
+			/* snip off the usable list */
+			if(prev)
+				prev->next_usable = usa->next_usable;
+			else	dp->usable_list = usa->next_usable;
+			return;
+		}
+		prev = usa;
+		usa = usa->next_usable;
+	}
+}
+
+void
+delegpt_add_to_result_list(struct delegpt* dp, struct delegpt_addr* a)
+{
+	if(delegpt_addr_on_result_list(dp, a))
+		return;
+	delegpt_usable_list_remove_addr(dp, a);
+	a->next_result = dp->result_list;
+	dp->result_list = a;
+}
+
 void 
 delegpt_add_unused_targets(struct delegpt* dp)
 {
@@ -338,13 +383,16 @@ delegpt_count_targets(struct delegpt* dp)
 }
 
 size_t 
-delegpt_count_missing_targets(struct delegpt* dp)
+delegpt_count_missing_targets(struct delegpt* dp, int* alllame)
 {
 	struct delegpt_ns* ns;
-	size_t n = 0;
-	for(ns = dp->nslist; ns; ns = ns->next)
-		if(!ns->resolved)
-			n++;
+	size_t n = 0, nlame = 0;
+	for(ns = dp->nslist; ns; ns = ns->next) {
+		if(ns->resolved) continue;
+		n++;
+		if(ns->lame) nlame++;
+	}
+	if(alllame && n == nlame) *alllame = 1;
 	return n;
 }
 
@@ -613,6 +661,7 @@ int delegpt_add_ns_mlc(struct delegpt* dp, uint8_t* name, uint8_t lame,
 	}
 	ns->next = dp->nslist;
 	dp->nslist = ns;
+	ns->cache_lookup_count = 0;
 	ns->resolved = 0;
 	ns->got4 = 0;
 	ns->got6 = 0;
@@ -694,6 +743,10 @@ int delegpt_add_target_mlc(struct delegpt* dp, uint8_t* name, size_t namelen,
 		else	ns->got4 = 1;
 		if(ns->got4 && ns->got6)
 			ns->resolved = 1;
+	} else {
+		if(addr_is_ip6(addr, addrlen))
+			ns->done_pside6 = 1;
+		else	ns->done_pside4 = 1;
 	}
 	log_assert(ns->port>0);
 	return delegpt_add_addr_mlc(dp, addr, addrlen, bogus, lame,
