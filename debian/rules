@@ -102,6 +102,11 @@ override_dh_auto_install: override_dh_auto_build
 	$(if ${libonly},, ${MAKE} -Cb/unbound install DESTDIR=${CURDIR}/debian/tmp)
 	# this overrides the library (static & shared), headers and the manpages
 	${MAKE} -Cb/libunbound install-lib DESTDIR=${CURDIR}/debian/tmp
+# as of 1.23, ./configure does not honour --disable-static
+	rm -f debian/tmp/usr/lib/${DEB_HOST_MULTIARCH}/libunbound.a
+# drop static-build deps from the .pc file
+	sed -r -i '/^(Libs|Requires)\.private/D' \
+	    debian/tmp/usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/libunbound.pc
 
 ifeq (,${libonly})
 	install -Dp -m 0644 debian/apparmor-profile debian/unbound/etc/apparmor.d/usr.sbin.unbound

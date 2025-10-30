@@ -1,3 +1,32 @@
+unbound (1.24.1-1) unstable; urgency=medium
+
+  [ MichaIng ]
+  * d/unbound.conf.d/remote-control.conf: fix typo
+
+  [ Michael Tokarev ]
+  * d/upstream/signing-key.asc: add Yorgos Thessalonikefs key
+    (CFF3 344D 9087 A490)
+  * new upstream security/bugfix release
+    Closes: CVE-2025-11411 (possible domain hijacking attack)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 22 Oct 2025 13:41:36 +0300
+
+unbound (1.24.0-2) unstable; urgency=medium
+
+  * d/tests/runzones: set so-sndbuf to 0
+    unbound tries to set it to a large(ish) value which is not allowed
+    for a non-root.  And unbound complains to stderr, causing test failure.
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 23 Sep 2025 17:40:14 +0300
+
+unbound (1.24.0-1) unstable; urgency=medium
+
+  * new upstream release
+  * d/rules,d/libunbound-dev.install: drop static library and deps
+    (Closes: #1096189)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 18 Sep 2025 20:55:14 +0300
+
 unbound (1.23.1-1) unstable; urgency=medium
 
   * new upstream release
