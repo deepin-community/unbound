@@ -382,7 +382,7 @@ read_cert_file(const char* file)
 	STACK_OF(X509)* sk;
 	FILE* in;
 	int content = 0;
-	char buf[128];
+	long flen;
 	if(file == NULL || strcmp(file, "") == 0) {
 		return NULL;
 	}
@@ -399,6 +399,11 @@ read_cert_file(const char* file)
 #endif
 		return NULL;
 	}
+	if(fseek(in, 0, SEEK_END) < 0)
+		printf("%s fseek: %s\n", file, strerror(errno));
+	flen = ftell(in);
+	if(fseek(in, 0, SEEK_SET) < 0)
+		printf("%s fseek: %s\n", file, strerror(errno));
 	while(!feof(in)) {
 		X509* x = PEM_read_X509(in, NULL, NULL, NULL);
 		if(x == NULL) {
@@ -414,8 +419,9 @@ read_cert_file(const char* file)
 			exit(0);
 		}
 		content = 1;
-		/* read away newline after --END CERT-- */
-		if(!fgets(buf, (int)sizeof(buf), in))
+		/* feof may not be true yet, but if the position is
+		 * at end of file, stop reading more certificates. */
+		if(ftell(in) == flen)
 			break;
 	}
 	fclose(in);
@@ -2424,12 +2430,20 @@ int main(int argc, char* argv[])
 #else
 	OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS
 		| OPENSSL_INIT_ADD_ALL_DIGESTS
-		| OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+		| OPENSSL_INIT_LOAD_CRYPTO_STRINGS
+#  if defined(OPENSSL_INIT_NO_LOAD_CONFIG) && defined(UB_ON_WINDOWS)
+		| OPENSSL_INIT_NO_LOAD_CONFIG
+#  endif
+		, NULL);
 #endif
 #if OPENSSL_VERSION_NUMBER < 0x10100000 || !defined(HAVE_OPENSSL_INIT_SSL)
 	(void)SSL_library_init();
 #else
-	(void)OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS, NULL);
+	(void)OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS
+#  if defined(OPENSSL_INIT_NO_LOAD_CONFIG) && defined(UB_ON_WINDOWS)
+		| OPENSSL_INIT_NO_LOAD_CONFIG
+#  endif
+		, NULL);
 #endif
 
 	if(dolist) do_list_builtin();

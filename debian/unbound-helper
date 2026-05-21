@@ -23,9 +23,19 @@ if [ -f /etc/default/unbound ]; then
     esac
 fi
 
-do_resolvconf_start() {
-    [ false != "$RESOLVCONF" -a -x /sbin/resolvconf ] || return 0
+want_resolvconf() {
+    resolvconf=/usr/sbin/resolvconf
+    [ false != "$RESOLVCONF" -a -x $resolvconf ] || return 1
+    if [ -L $resolvconf ]; then
+        case $(readlink $resolvconf) in
+            (*resolvectl) return 1;; # systemd's resolvconf
+        esac
+    fi
+    return 0
+}
 
+do_resolvconf_start() {
+    want_resolvconf || return 0
     unbound-checkconf $CHROOT_DIR/$UNBOUND_CONF -o interface | {
         default=yes
         while read interface; do
@@ -40,13 +50,12 @@ do_resolvconf_start() {
         [ -z "$default" ] ||
             # unbound defaults to listening on localhost
             echo "nameserver 127.0.0.1"
-    } | /sbin/resolvconf -a lo.unbound
+    } | $resolvconf -a lo.unbound
 }
 
 do_resolvconf_stop() {
-    [ false != "$RESOLVCONF" -a -x /sbin/resolvconf ] || return 0
-
-    /sbin/resolvconf -d lo.unbound
+    want_resolvconf || return 0
+    $resolvconf -d lo.unbound
 }
 
 do_chroot_setup() {

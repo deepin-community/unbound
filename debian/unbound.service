@@ -8,6 +8,7 @@ Wants=nss-lookup.target
 [Service]
 Type=notify
 Restart=on-failure
+Environment=DAEMON_OPTS=
 EnvironmentFile=-/etc/default/unbound
 ExecStartPre=-/usr/libexec/unbound-helper chroot_setup
 ExecStartPre=-/usr/libexec/unbound-helper root_trust_anchor_update

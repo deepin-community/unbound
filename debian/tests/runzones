@@ -29,6 +29,7 @@ server:
  pidfile: unbound.pid
  port: 1053
  interface: 127.0.0.1
+ so-sndbuf: 0
 remote-control:
   control-enable: yes
   control-interface: "$AUTOPKGTEST_TMP/unbound.ctl"

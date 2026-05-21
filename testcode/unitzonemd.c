@@ -50,7 +50,11 @@
 
 #define xstr(s) str(s)
 #define str(s) #s
+#ifndef __QNX__
 #define SRCDIRSTR xstr(SRCDIR)
+#else /* !__QNX__ */
+#define SRCDIRSTR "."
+#endif /* __QNX__ */
 
 /** Add zone from file for testing */
 struct auth_zone* authtest_addzone(struct auth_zones* az, const char* name,
@@ -267,6 +271,7 @@ static void zonemd_verify_test(char* zname, char* zfile, char* tastr,
 	env.cfg = config_create();
 	if(!env.cfg)
 		fatal_exit("out of memory");
+	config_auto_slab_values(env.cfg);
 	env.now = &now;
 	env.cfg->val_date_override = cfg_convert_timeval(date_override);
 	if(!env.cfg->val_date_override)

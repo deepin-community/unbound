@@ -297,6 +297,7 @@ error_response_cache(struct module_qstate* qstate, int id, int rcode)
 	struct reply_info err;
 	struct msgreply_entry* msg;
 	if(qstate->no_cache_store) {
+		qstate->error_response_cache = 1;
 		return error_response(qstate, id, rcode);
 	}
 	if(qstate->prefetch_leeway > NORR_TTL) {
@@ -829,7 +830,7 @@ generate_sub_request(uint8_t* qname, size_t qnamelen, uint16_t qtype,
 		struct mesh_state* sub = NULL;
 		fptr_ok(fptr_whitelist_modenv_add_sub(
 			qstate->env->add_sub));
-		if(!(*qstate->env->add_sub)(qstate, &qinf,
+		if(!(*qstate->env->add_sub)(qstate, &qinf, NULL,
 			qflags, prime, valrec, &subq, &sub)){
 			return 0;
 		}
@@ -838,8 +839,8 @@ generate_sub_request(uint8_t* qname, size_t qnamelen, uint16_t qtype,
 		/* attach subquery, lookup existing or make a new one */
 		fptr_ok(fptr_whitelist_modenv_attach_sub(
 			qstate->env->attach_sub));
-		if(!(*qstate->env->attach_sub)(qstate, &qinf, qflags, prime,
-			valrec, &subq)) {
+		if(!(*qstate->env->attach_sub)(qstate, &qinf, NULL, qflags,
+			prime, valrec, &subq)) {
 			return 0;
 		}
 	}
@@ -2152,6 +2153,7 @@ processLastResort(struct module_qstate* qstate, struct iter_qstate* iq,
 		verbose(VERB_QUERY, "configured stub or forward servers failed -- returning SERVFAIL");
 		return error_response_cache(qstate, id, LDNS_RCODE_SERVFAIL);
 	}
+	iq->dp->fallback_to_parent_side_NS = 1;
 	if(qstate->env->cfg->harden_unverified_glue) {
 		if(!cache_fill_missing(qstate->env, iq->qchase.qclass,
 			qstate->region, iq->dp, PACKED_RRSET_UNVERIFIED_GLUE))
@@ -2180,6 +2182,10 @@ processLastResort(struct module_qstate* qstate, struct iter_qstate* iq,
 					a->lame, a->tls_auth_name, -1, NULL);
 			}
 			lock_rw_unlock(&qstate->env->hints->lock);
+			/* copy over some configuration since we update the
+			 * delegation point in place */
+			iq->dp->tcp_upstream = dp->tcp_upstream;
+			iq->dp->ssl_upstream = dp->ssl_upstream;
 		}
 		iq->dp->has_parent_side_NS = 1;
 	} else if(!iq->dp->has_parent_side_NS) {
@@ -2431,8 +2437,6 @@ processQueryTargets(struct module_qstate* qstate, struct iter_qstate* iq,
 	int tf_policy;
 	struct delegpt_addr* target;
 	struct outbound_entry* outq;
-	struct sockaddr_storage real_addr;
-	socklen_t real_addrlen;
 	int auth_fallback = 0;
 	uint8_t* qout_orig = NULL;
 	size_t qout_orig_len = 0;
@@ -2768,7 +2772,8 @@ processQueryTargets(struct module_qstate* qstate, struct iter_qstate* iq,
 	}
 	/* if the mesh query list is full, then do not waste cpu and sockets to
 	 * fetch promiscuous targets. They can be looked up when needed. */
-	if(can_do_promisc && !mesh_jostle_exceeded(qstate->env->mesh)) {
+	if(!iq->dp->fallback_to_parent_side_NS && can_do_promisc
+		&& !mesh_jostle_exceeded(qstate->env->mesh)) {
 		tf_policy = ie->target_fetch_policy[iq->depth];
 	}
 
@@ -3054,17 +3059,6 @@ processQueryTargets(struct module_qstate* qstate, struct iter_qstate* iq,
 			iq->dnssec_lame_query?" but lame_query anyway": "");
 	}
 
-	real_addr = target->addr;
-	real_addrlen = target->addrlen;
-
-	if(ie->nat64.use_nat64 && target->addr.ss_family == AF_INET) {
-		addr_to_nat64(&target->addr, &ie->nat64.nat64_prefix_addr,
-			ie->nat64.nat64_prefix_addrlen, ie->nat64.nat64_prefix_net,
-			&real_addr, &real_addrlen);
-		log_name_addr(VERB_QUERY, "applied NAT64:",
-			iq->dp->name, &real_addr, real_addrlen);
-	}
-
 	fptr_ok(fptr_whitelist_modenv_send_query(qstate->env->send_query));
 	outq = (*qstate->env->send_query)(&iq->qinfo_out,
 		iq->chase_flags | (iq->chase_to_rd?BIT_RD:0),
@@ -3076,7 +3070,7 @@ processQueryTargets(struct module_qstate* qstate, struct iter_qstate* iq,
 		!qstate->blacklist&&(!iter_qname_indicates_dnssec(qstate->env,
 		&iq->qinfo_out)||target->attempts==1)?0:BIT_CD),
 		iq->dnssec_expected, iq->caps_fallback || is_caps_whitelisted(
-		ie, iq), sq_check_ratelimit, &real_addr, real_addrlen,
+		ie, iq), sq_check_ratelimit, &target->addr, target->addrlen,
 		iq->dp->name, iq->dp->namelen,
 		(iq->dp->tcp_upstream || qstate->env->cfg->tcp_upstream),
 		(iq->dp->ssl_upstream || qstate->env->cfg->ssl_upstream),
@@ -3093,7 +3087,7 @@ processQueryTargets(struct module_qstate* qstate, struct iter_qstate* iq,
 			return error_response_cache(qstate, id, LDNS_RCODE_SERVFAIL);
 		}
 		log_addr(VERB_QUERY, "error sending query to auth server",
-			&real_addr, real_addrlen);
+			&target->addr, target->addrlen);
 		if(qstate->env->cfg->qname_minimisation)
 			iq->minimisation_state = SKIP_MINIMISE_STATE;
 		return next_state(iq, QUERYTARGETS_STATE);
@@ -3230,8 +3224,19 @@ processQueryResponse(struct module_qstate* qstate, struct iter_qstate* iq,
 	} else iter_scrub_ds(iq->response, NULL, NULL);
 	if(type == RESPONSE_TYPE_THROWAWAY &&
 		FLAGS_GET_RCODE(iq->response->rep->flags) == LDNS_RCODE_YXDOMAIN) {
-		/* YXDOMAIN is a permanent error, no need to retry */
-		type = RESPONSE_TYPE_ANSWER;
+		/* YXDOMAIN is a permanent error for DNAME expansion overflow
+		 * (RFC 6672 Section 2.2). Only accept if the response
+		 * contains a DNAME record in the answer section; otherwise
+		 * treat as invalid, to make sure the authoritative answer
+		 * make sense. */
+		size_t i;
+		for(i=0; i<iq->response->rep->an_numrrsets; i++) {
+			if(ntohs(iq->response->rep->rrsets[i]->rk.type)
+				== LDNS_RR_TYPE_DNAME) {
+				type = RESPONSE_TYPE_ANSWER;
+				break;
+			}
+		}
 	}
 	if(type == RESPONSE_TYPE_CNAME)
 		origtypecname = 1;
@@ -3247,13 +3252,19 @@ processQueryResponse(struct module_qstate* qstate, struct iter_qstate* iq,
 		}
 	}
 	if(type == RESPONSE_TYPE_CNAME &&
-		iq->qchase.qtype == LDNS_RR_TYPE_CNAME &&
+		(iq->qchase.qtype == LDNS_RR_TYPE_CNAME ||
+		  iq->qchase.qtype == LDNS_RR_TYPE_ANY) &&
 		iq->minimisation_state == MINIMISE_STATE &&
 		query_dname_compare(iq->qchase.qname, iq->qinfo_out.qname) == 0) {
 		/* The minimised query for full QTYPE and hidden QTYPE can be
 		 * classified as CNAME response type, even when the original
 		 * QTYPE=CNAME. This should be treated as answer response type.
 		 */
+		/* For QTYPE=ANY, it is also considered the response, that
+		 * is what the classifier would say, if it saw qtype ANY,
+		 * and this same response was returned for that. The response
+		 * can already be treated as such an answer, without having
+		 * to send another query with a new qtype. */
 		type = RESPONSE_TYPE_ANSWER;
 	}
 
@@ -3510,6 +3521,15 @@ processQueryResponse(struct module_qstate* qstate, struct iter_qstate* iq,
 			iq->num_target_queries = 0;
 			return processDSNSFind(qstate, iq, id);
 		}
+		if(iq->minimisation_state == MINIMISE_STATE &&
+			query_dname_compare(iq->qchase.qname,
+			iq->qinfo_out.qname) != 0) {
+			verbose(VERB_ALGO, "continue query minimisation, "
+				"downwards, after CNAME response for "
+				"intermediate label");
+			/* continue query minimisation, downwards */
+			return next_state(iq, QUERYTARGETS_STATE);
+		}
 		/* Process the CNAME response. */
 		if(!handle_cname_response(qstate, iq, iq->response, 
 			&sname, &snamelen)) {
@@ -3572,10 +3592,7 @@ processQueryResponse(struct module_qstate* qstate, struct iter_qstate* iq,
 		iq->auth_zone_response = 0;
 		iq->sent_count = 0;
 		iq->dp_target_count = 0;
-		if(iq->minimisation_state != MINIMISE_STATE)
-			/* Only count as query restart when it is not an extra
-			 * query as result of qname minimisation. */
-			iq->query_restart_count++;
+		iq->query_restart_count++;
 		if(qstate->env->cfg->qname_minimisation)
 			iq->minimisation_state = INIT_MINIMISE_STATE;
 
@@ -3598,7 +3615,7 @@ processQueryResponse(struct module_qstate* qstate, struct iter_qstate* iq,
 		return next_state(iq, INIT_REQUEST_STATE);
 	} else if(type == RESPONSE_TYPE_LAME) {
 		/* Cache the LAMEness. */
-		verbose(VERB_DETAIL, "query response was %sLAME",
+		verbose(VERB_DETAIL, "query response was categorized as %sLAME",
 			dnsseclame?"DNSSEC ":"");
 		if(!dname_subdomain_c(iq->qchase.qname, iq->dp->name)) {
 			log_err("mark lame: mismatch in qname and dpname");
@@ -3637,7 +3654,7 @@ processQueryResponse(struct module_qstate* qstate, struct iter_qstate* iq,
 		 * In this case, the event is just sent directly back to 
 		 * the QUERYTARGETS_STATE without resetting anything, 
 		 * because, clearly, the next target must be tried. */
-		verbose(VERB_DETAIL, "query response was THROWAWAY");
+		verbose(VERB_DETAIL, "query response was categorized as THROWAWAY");
 	} else {
 		log_warn("A query response came back with an unknown type: %d",
 			(int)type);
@@ -4147,7 +4164,7 @@ processFinished(struct module_qstate* qstate, struct iter_qstate* iq,
 		/* store message with the finished prepended items,
 		 * but only if we did recursion. The nonrecursion referral
 		 * from cache does not need to be stored in the msg cache. */
-		if(!qstate->no_cache_store && qstate->query_flags&BIT_RD) {
+		if(!qstate->no_cache_store && (qstate->query_flags&BIT_RD)) {
 			iter_dns_store(qstate->env, &qstate->qinfo, 
 				iq->response->rep, 0, qstate->prefetch_leeway,
 				iq->dp&&iq->dp->has_parent_side_NS,

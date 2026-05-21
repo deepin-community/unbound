@@ -1,3 +1,90 @@
+unbound (1.25.1-1) unstable; urgency=medium
+
+  * new upstream security/bugfix release (Closes: #1137187):
+    - Fix CVE-2026-33278, Possible remote code execution during DNSSEC
+      validation
+    - Fix CVE-2026-42944, Heap overflow and crash with multiple nsid, cookie,
+      padding EDNS options
+    - Fix CVE-2026-42959, Crash during DNSSEC validation of malicious content
+    - Fix CVE-2026-32792, Packet of death with DNSCrypt
+    - Fix CVE-2026-40622, "Ghost domain name" variant
+    - Fix CVE-2026-41292, Parsing a long list of incoming EDNS options degrades
+      performance
+    - Fix CVE-2026-42534, Jostle logic bypass degrades resolution performance
+    - Fix CVE-2026-42923, Degradation of service with unbounded NSEC3
+      hash calculations
+    - Fix CVE-2026-42960, Possible cache poisoning attack while following
+      delegation
+    - Fix CVE-2026-44390, Unbounded name compression in certain cases
+      causes degradation of service
+    - Fix CVE-2026-44608, Use after free and crash in RPZ code
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 20 May 2026 19:41:23 +0300
+
+unbound (1.25.0-1) unstable; urgency=medium
+
+  [ Michael Tokarev ]
+  * new upstream release
+  * replace-deprecated-function-by-new-action.patch: remove
+  * d/unbound.service: set empty DAEMON_OPTS= to avoid warning from systemd
+  * unbound-helper: do not update resolvconf if it is systemd-resolved
+    (Closes: #1106186)
+  * d/upstream/signing-key.asc: update with the new upstream key
+
+  [ Luca Boccassi ]
+  * Install and use sysusers.d/tmpfiles.d config files
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 05 May 2026 15:45:07 +0300
+
+unbound (1.24.2-1) unstable; urgency=medium
+
+  * new upstream security release:
+    Additional fix for CVE-2025-11411 (possible domain hijacking attack),
+    to include YXDOMAIN and non-referral nodata answers in the mitigation
+    as well, reported by TaoFei Guo from Peking University, Yang Luo
+    and JianJun Chen from Tsinghua University.
+    Closes: #1121446, CVE-2025-11411
+  * debian/upstream/signing-key.asc: merge two separate parts into one
+    (keeping the same two keys)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 26 Nov 2025 22:59:06 +0300
+
+unbound (1.24.1-2) unstable; urgency=medium
+
+  * replace-deprecated-function-by-new-action.patch:
+    fix build with new SWIG 4.4.0 (fix from upstream)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 30 Oct 2025 14:18:08 +0300
+
+unbound (1.24.1-1) unstable; urgency=medium
+
+  [ MichaIng ]
+  * d/unbound.conf.d/remote-control.conf: fix typo
+
+  [ Michael Tokarev ]
+  * d/upstream/signing-key.asc: add Yorgos Thessalonikefs key
+    (CFF3 344D 9087 A490)
+  * new upstream security/bugfix release
+    Closes: CVE-2025-11411 (possible domain hijacking attack)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 22 Oct 2025 13:41:36 +0300
+
+unbound (1.24.0-2) unstable; urgency=medium
+
+  * d/tests/runzones: set so-sndbuf to 0
+    unbound tries to set it to a large(ish) value which is not allowed
+    for a non-root.  And unbound complains to stderr, causing test failure.
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 23 Sep 2025 17:40:14 +0300
+
+unbound (1.24.0-1) unstable; urgency=medium
+
+  * new upstream release
+  * d/rules,d/libunbound-dev.install: drop static library and deps
+    (Closes: #1096189)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 18 Sep 2025 20:55:14 +0300
+
 unbound (1.23.1-1) unstable; urgency=medium
 
   * new upstream release
