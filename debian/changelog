@@ -1,5 +1,8 @@
 unbound (1.23.1-2) unstable; urgency=medium
 
+  * CVE-2026-42959: fix DoS in DNSSEC validator.
+    The vulnerability causes crash due to wrong counter in chase-reply
+    message construction for validation.
   * CVE-2026-42944: fix heap overflow in EDNS options encoding.
     The vulnerability allows heap overflow when encoding multiple NSID
     and/or DNS Cookie EDNS and/or EDNS Padding options in reply packets.
