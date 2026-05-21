@@ -1,3 +1,11 @@
+unbound (1.23.1-2) unstable; urgency=medium
+
+  * CVE-2026-42944: fix heap overflow in EDNS options encoding.
+    The vulnerability allows heap overflow when encoding multiple NSID
+    and/or DNS Cookie EDNS and/or EDNS Padding options in reply packets.
+
+ -- deepin-ci-robot <packages@deepin.org>  Thu, 21 May 2026 14:35:00 +0800
+
 unbound (1.23.1-1) unstable; urgency=medium
 
   * new upstream release

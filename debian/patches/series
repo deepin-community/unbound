@@ -1,1 +1,3 @@
 do-not-chown-control-socket.patch
+CVE-2026-42944.patch
+CVE-2026-42959.patch
