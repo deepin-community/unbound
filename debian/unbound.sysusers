@@ -1,1 +1,1 @@
-u! unbound - "unbound" /var/lib/unbound /usr/sbin/nologin
+u unbound - "unbound" /var/lib/unbound /usr/sbin/nologin
