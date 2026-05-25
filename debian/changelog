@@ -1,3 +1,11 @@
+unbound (1.25.1-1deepin1) unstable; urgency=medium
+
+  * unbound.sysusers: Drop exclamation mark on u since our systemd
+    is not 257 yet.
+    https://github.com/systemd/systemd/pull/34876
+
+ -- lichenggang <lichenggang@uniontech.com>  Mon, 25 May 2026 16:00:00 +0800
+
 unbound (1.25.1-1) unstable; urgency=medium
 
   * new upstream security/bugfix release (Closes: #1137187):
