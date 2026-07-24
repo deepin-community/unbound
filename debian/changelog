@@ -1,3 +1,9 @@
+unbound (1.25.1-1deepin24) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-54478
+
+ -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:47:32 +0800
+
 unbound (1.25.1-1deepin23) unstable; urgency=medium
 
   * fix(cve): CVE-2026-41637
