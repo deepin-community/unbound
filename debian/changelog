@@ -1,3 +1,9 @@
+unbound (1.25.1-1deepin2) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-55973
+
+ -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 10:49:51 +0800
+
 unbound (1.25.1-1deepin1) unstable; urgency=medium
 
   * unbound.sysusers: Drop exclamation mark on u since our systemd
