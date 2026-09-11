@@ -1,3 +1,9 @@
+unbound (1.25.1-1deepin27) unstable; urgency=medium
+
+  * Rebuild with LTO enabled (dpkg vendor feature optimize/lto).
+
+ -- tunaichao <tunaichao@uniontech.com>  Fri, 11 Sep 2026 18:11:49 +0800
+
 unbound (1.25.1-1deepin26) unstable; urgency=medium
 
   * fix(cve): CVE-2026-46582
