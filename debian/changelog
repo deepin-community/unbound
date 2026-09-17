@@ -1,3 +1,13 @@
+unbound (1.25.1-1deepin28) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-85501 (medium) - - Fix CVE-2026-85501, Retrap:
+    Novel Vulnerabilities to launch Algorithmic Complexity Attacks on
+    DNSSEC   Upstream:
+    https://github.com/NLnetLabs/unbound/commit/13b6717f1716810523ffb60f
+    971a6c9c5e8ce127
+
+ -- deepin-ci-robot <packages@deepin.org>  Thu, 17 Sep 2026 17:34:30 +0800
+
 unbound (1.25.1-1deepin27) unstable; urgency=medium
 
   * Rebuild with LTO enabled (dpkg vendor feature optimize/lto).
