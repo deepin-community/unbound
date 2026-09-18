@@ -10,6 +10,10 @@ unbound (1.25.1-1deepin28) unstable; urgency=medium
     DNSKEY   Upstream:
     https://github.com/NLnetLabs/unbound/commit/8c2e0fd6cc5b6eaa618ac722
     27808824b4edee7c
+  * fix(cve): CVE-2026-81634 (high) - - Fix CVE-2026-81634, Possible
+    heap buffer overflow during DNSSEC canonicalization. Thanks to
+    Vlatko Kosturjak with Marlink Cyber, for the report.   Upstream:
+    https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-81634.diff
 
  -- deepin-ci-robot <packages@deepin.org>  Thu, 17 Sep 2026 17:34:30 +0800
 
