@@ -14,6 +14,10 @@ unbound (1.25.1-1deepin28) unstable; urgency=medium
     heap buffer overflow during DNSSEC canonicalization. Thanks to
     Vlatko Kosturjak with Marlink Cyber, for the report.   Upstream:
     https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-81634.diff
+  * fix(cve): CVE-2026-82717 (high) - Fix CVE-2026-82717, CNAME
+    synthesis could lead to heap corruption   Upstream:
+    https://github.com/NLnetLabs/unbound/commit/0d4a6a63dd71050d216a467b
+    488e28176f2599df
 
  -- deepin-ci-robot <packages@deepin.org>  Thu, 17 Sep 2026 17:34:30 +0800
 
