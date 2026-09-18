@@ -5,6 +5,11 @@ unbound (1.25.1-1deepin28) unstable; urgency=medium
     DNSSEC   Upstream:
     https://github.com/NLnetLabs/unbound/commit/13b6717f1716810523ffb60f
     971a6c9c5e8ce127
+  * fix(cve): CVE-2026-81642 (critical) - Fix CVE-2026-81642, Heap
+    buffer overflow and possible Remote Code Execution when digesting
+    DNSKEY   Upstream:
+    https://github.com/NLnetLabs/unbound/commit/8c2e0fd6cc5b6eaa618ac722
+    27808824b4edee7c
 
  -- deepin-ci-robot <packages@deepin.org>  Thu, 17 Sep 2026 17:34:30 +0800
 
