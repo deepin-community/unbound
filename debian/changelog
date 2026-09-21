@@ -5,6 +5,9 @@ unbound (1.25.1-1deepin28) unstable; urgency=medium
     connection.   Upstream:
     https://github.com/NLnetLabs/unbound/commit/e619ead2dbcde8fc47f03b2a
     c68987b3377da4c7
+  * fix(cve): CVE-2026-77955 (medium) - Fix CVE-2026-77955, Possible
+    ZONEMD verification bypass window.   Upstream:
+    https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-77955.diff
 
  -- deepin-ci-robot <packages@deepin.org>  Fri, 18 Sep 2026 02:06:49 +0800
 
