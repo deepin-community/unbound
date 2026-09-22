@@ -1,285 +1,273 @@
-unbound (1.25.1-1deepin28) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-85501 (medium) - - Fix CVE-2026-85501, Retrap:
-    Novel Vulnerabilities to launch Algorithmic Complexity Attacks on
-    DNSSEC   Upstream:
-    https://github.com/NLnetLabs/unbound/commit/13b6717f1716810523ffb60f
-    971a6c9c5e8ce127
-  * fix(cve): CVE-2026-81642 (critical) - Fix CVE-2026-81642, Heap
-    buffer overflow and possible Remote Code Execution when digesting
-    DNSKEY   Upstream:
-    https://github.com/NLnetLabs/unbound/commit/8c2e0fd6cc5b6eaa618ac722
-    27808824b4edee7c
-  * fix(cve): CVE-2026-81634 (high) - - Fix CVE-2026-81634, Possible
-    heap buffer overflow during DNSSEC canonicalization. Thanks to
-    Vlatko Kosturjak with Marlink Cyber, for the report.   Upstream:
-    https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-81634.diff
-  * fix(cve): CVE-2026-82717 (high) - Fix CVE-2026-82717, CNAME
-    synthesis could lead to heap corruption   Upstream:
-    https://github.com/NLnetLabs/unbound/commit/0d4a6a63dd71050d216a467b
-    488e28176f2599df
-
- -- deepin-ci-robot <packages@deepin.org>  Thu, 17 Sep 2026 17:34:30 +0800
-
-unbound (1.25.1-1deepin27) unstable; urgency=medium
-
-  * Rebuild with LTO enabled (dpkg vendor feature optimize/lto).
-
- -- tunaichao <tunaichao@uniontech.com>  Fri, 11 Sep 2026 18:11:49 +0800
-
-unbound (1.25.1-1deepin26) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-46582
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 13:00:31 +0800
-
-unbound (1.25.1-1deepin25) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-44687
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:52:28 +0800
-
-unbound (1.25.1-1deepin24) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-54478
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:47:32 +0800
-
-unbound (1.25.1-1deepin23) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-41637
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:41:29 +0800
-
-unbound (1.25.1-1deepin22) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-55708
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:35:36 +0800
-
-unbound (1.25.1-1deepin21) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-42955
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:29:59 +0800
-
-unbound (1.25.1-1deepin20) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-52863
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:24:19 +0800
-
-unbound (1.25.1-1deepin19) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-14586
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:19:31 +0800
-
-unbound (1.25.1-1deepin18) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-55717
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:14:41 +0800
-
-unbound (1.25.1-1deepin17) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-55991
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:09:08 +0800
-
-unbound (1.25.1-1deepin16) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-50248
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 12:03:50 +0800
-
-unbound (1.25.1-1deepin15) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-50251
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:57:39 +0800
-
-unbound (1.25.1-1deepin14) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-56416
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:51:44 +0800
-
-unbound (1.25.1-1deepin13) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-44621
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:46:37 +0800
-
-unbound (1.25.1-1deepin12) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-50243
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:40:53 +0800
-
-unbound (1.25.1-1deepin11) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-50045
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:35:06 +0800
-
-unbound (1.25.1-1deepin10) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-50046
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:30:38 +0800
-
-unbound (1.25.1-1deepin9) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-50252
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:24:55 +0800
-
-unbound (1.25.1-1deepin8) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-56444
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:19:25 +0800
-
-unbound (1.25.1-1deepin7) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-55990
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:14:03 +0800
-
-unbound (1.25.1-1deepin6) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-44690
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:08:25 +0800
-
-unbound (1.25.1-1deepin5) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-32665
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:01:35 +0800
-
-unbound (1.25.1-1deepin4) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-32665
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 11:01:23 +0800
-
-unbound (1.25.1-1deepin3) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-40691
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 10:54:46 +0800
-
-unbound (1.25.1-1deepin2) unstable; urgency=medium
-
-  * fix(cve): CVE-2026-55973
-
- -- deepin-ci-robot <packages@deepin.org>  Fri, 24 Jul 2026 10:49:51 +0800
-
-unbound (1.25.1-1deepin1) unstable; urgency=medium
-
-  * unbound.sysusers: Drop exclamation mark on u since our systemd
-    is not 257 yet.
-    https://github.com/systemd/systemd/pull/34876
-
- -- lichenggang <lichenggang@uniontech.com>  Mon, 25 May 2026 16:00:00 +0800
-
-unbound (1.25.1-1) unstable; urgency=medium
-
-  * new upstream security/bugfix release (Closes: #1137187):
-    - Fix CVE-2026-33278, Possible remote code execution during DNSSEC
-      validation
-    - Fix CVE-2026-42944, Heap overflow and crash with multiple nsid, cookie,
-      padding EDNS options
-    - Fix CVE-2026-42959, Crash during DNSSEC validation of malicious content
-    - Fix CVE-2026-32792, Packet of death with DNSCrypt
-    - Fix CVE-2026-40622, "Ghost domain name" variant
-    - Fix CVE-2026-41292, Parsing a long list of incoming EDNS options degrades
-      performance
-    - Fix CVE-2026-42534, Jostle logic bypass degrades resolution performance
-    - Fix CVE-2026-42923, Degradation of service with unbounded NSEC3
-      hash calculations
-    - Fix CVE-2026-42960, Possible cache poisoning attack while following
-      delegation
-    - Fix CVE-2026-44390, Unbounded name compression in certain cases
-      causes degradation of service
-    - Fix CVE-2026-44608, Use after free and crash in RPZ code
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 20 May 2026 19:41:23 +0300
-
-unbound (1.25.0-1) unstable; urgency=medium
+unbound (1.26.1-0+deb13u1) trixie-security; urgency=medium
+
+  * New upstream release fixing numerous security and other issues and contains
+    some enhancements.
+
+    Traditionally in Debian, bugs in stable versions are fixed by providing
+    a back-port of a fix from later upstream version to the version in Debian
+    stable.  With unbound, fixes in subsequent versions can not be applied
+    directly to the version in Debian stable, as there were multiple other code
+    changes in these areas.  Many of these changes fixes other issues (security
+    or not).  Some changes are in areas with complex logic, hence requires
+    creat care when back-porting to older releases.  And the result of such
+    back-porting becomes unique and rather unpredictable.  So instead of trying
+    to provide fixes for older version in Debian stable, we decided to provide
+    current upstream version of unbound, - the same as currently available in
+    Debian Sid.  The packaging is made very similar too.
+
+    Recent security fixes:
+
+    o CVE-2026-81642 - severity: CRITICAL
+      Heap buffer overflow and possible Remote Code Execution
+      when digesting DNSKEY
+    o CVE-2026-81634 - severity: HIGH
+      Possible heap buffer overflow during DNSSEC canonicalization
+    o CVE-2026-82717 - severity: HIGH
+      CNAME synthesis could lead to heap corruption
+    o CVE-2026-77955 - severity: MEDIUM
+      Possible ZONEMD verification bypass window
+    o CVE-2026-78227 - severity: MEDIUM
+      Use-after-free in DoQ stream output buffer on reset re-transmission
+    o CVE-2026-80225 - severity: MEDIUM
+      Possible degradation of service from continuous queries
+      on the same TCP/DoT connection
+    o CVE-2026-82720 - severity: MEDIUM
+      Use-after-free in DoH stream cleanup code path
+    o CVE-2026-85501 - severity: MEDIUM
+      Retrap: Novel Vulnerabilities to launch Algorithmic Complexity Attacks
+      on DNSSEC
+    o CVE-2026-77860 - severity: LOW
+      'serve-expired' can bypass Unbound 'wait-limit'
+    o CVE-2026-32665 - severity: HIGH
+      Remote DNS-over-QUIC denial of service due to `quic-size` budget bypass
+    o CVE-2026-40691 - severity: HIGH
+      Packet of death for DNSCrypt over TCP
+    o CVE-2026-44690 - severity: HIGH
+      Cross-zone wildcard cache poisoning via RRSIG.labels manipulation
+    o CVE-2026-55973 - severity: HIGH
+      'dns-error-reporting: yes' leads to stack buffer overflow
+    o CVE-2026-14586 - severity: MEDIUM
+      Assertion in libngtcp2 when under pressure in high concurrency
+      DNS-over-QUIC environments
+    o CVE-2026-44621 - severity: MEDIUM
+      Libunbound applications configured with 'unwanted-reply-threshold'
+      could eventually be abruptly terminated
+    o CVE-2026-50045 - severity: MEDIUM
+      'max-global-quota' reset by DNSSEC validation restarts
+    o CVE-2026-50046 - severity: MEDIUM
+      Possible heap use-after-free in an error path when
+      a DoT forwarded query is jostled out
+    o CVE-2026-50243 - severity: MEDIUM
+      response-ip/rpz can rewrite BOGUS answers instead of returning SERVFAIL
+    o CVE-2026-50248 - severity: MEDIUM
+      BOGUS configured primary hostname accepted for XFR in auth/rpz zones
+    o CVE-2026-50251 - severity: MEDIUM
+      Attacker supplied 0.0.0.0/:: glue triggers defensive full-cache flush
+    o CVE-2026-50252 - severity: MEDIUM
+      Possible cache poisoning attack by mapping source port population
+      per thread
+    o CVE-2026-52863 - severity: MEDIUM
+      Memory corruption could lead to crash and denial of service
+    o CVE-2026-55717 - severity: MEDIUM
+      'serve-expired-client-timeout' and 'response-ip' CNAME redirect
+      could lead to a crash
+    o CVE-2026-55990 - severity: MEDIUM
+      Packet of death for a DNSCrypt misconfigured Unbound
+    o CVE-2026-55991 - severity: MEDIUM
+      Remote DNS-over-QUIC (DoQ) flow-control assertion failure in libngtcp2
+    o CVE-2026-56416 - severity: MEDIUM
+      Possible heap buffer overflow when validator canonicalizes RDATA
+      that contains domain name
+    o CVE-2026-56444 - severity: MEDIUM
+      Degradation of resolution service when 'discard-timeout' and
+      'serve-expired-client-timeout' are combined in unusual configuration
+    o CVE-2026-41637 - severity: LOW
+      Degradation of resolution service from improperly accounted
+      client-terminated DNS-over-QUIC queries
+    o CVE-2026-42955 - severity: LOW
+      Extra fix for CVE-2026-40622 to also clamp the TTL of A/AAAA records
+      disallowing a one-time 'ghost domain' delegation renewal via glue records
+    o CVE-2026-44687 - severity: LOW
+      Off-by-one error in 'harden-below-nxdomain' logic can shadow
+      a stub/forward zone by a legitimate parent's NXDOMAIN
+    o CVE-2026-46582 - severity: LOW
+      A wildcard replay, as another piece of data, triggers poisoning
+      in the serve expired reply path
+    o CVE-2026-54478 - severity: LOW
+      DNS Cookie bypass when combined with proxy-protocol use
+    o CVE-2026-55708 - severity: LOW
+      Privacy/configuration issue when adding local data in views
+      through 'unbound-control'
+
+    Other notable user-visible changes and fixes.  For complete list, please
+    see /usr/share/doc/unbound/changelog.gz
+
+    o ICANN Bundle Update: Refreshed icannbundle.pem certificates in
+      unbound-anchor to include public keys valid for 2009–2029 and 2025–2045
+    o Transfer Limits: Added max-transfer-size and max-transfer-time directives
+      to limit authorization zone (auth-zone) and RPZ transfer sizes and times
+      to harden against unbounded transfers.
+    o New Zone Types: Introduced block_aaaa static zone type to suppress AAAA
+      queries, plus block_a_wdata and block_aaaa_wdata to support custom local
+      data fallback.
+    o Management Improvements: Overloaded local_data_remove
+      to allow the removal of precise records.
+    o Fix for the Jiggle Attack. The server is fixed to answer with errors
+      for error cases, and does not stay silent.  In addition, the error
+      replies do not contain parts of the incoming query.  This is more
+      conformant, stops reflection and stops it as a covert channel.
+    o Fix EDNS extended RCODE reflection. This fixes that the server does not
+      echo extended rcode values after class chaos queries.
+    o Fix for iterator RCODE handling of YXDOMAIN.  This fixes that the server
+      only accepts YXDOMAIN answers that contain a DNAME record.  This stops
+      bad answers, and checks that the authoritative server gives correct
+      replies.
+    o Fix for missing bounds check for decompressing dnames for downloaded
+      authority zones.  This fixes that the server could end up with malformed
+      zone content after receiving truncated packet contents from an AXFR.
+      In addition, the domain names in the SOA rdata are checked before the
+      authority code picks up the zone serial.
+    o Fix that upstream TLS connections are not reused as TLS connections for
+      a different name, at the same IP.  This checks that the tls name is
+      correct when reusing the upstream connections.
+    o Fix that signatures are not allowed with revoked dnskeys.
+    o Fix that a DNAME with an unsigned CNAME is checked for the correct match.
+      This stops that for certain zone configurations an unchecked unsigned
+      CNAME could get secure status.
+    o Fix handling of wildcard CNAMEs in the chain of trust.  An improper
+      wildcard in the chain of trust would send the retries to the wrong
+      upstream.  Also it could label the step in the chain of trust as secure,
+      when it was not.
+    o Introduce new 'tls-protocols' configuration option that specifies which
+      of the supported TLS protocols will be used.
+    o Fix RFC7766 compliance when client sends EOF over TCP.
+      It stops pending replies and closes.
+    o Fix to shorten RRSIG count in scrubber, this protects against an overly
+      large number of RRSIGs.  It can be configured with `iter-scrub-rrsig: 8`,
+      it has default 8.
+    o Fix for EDNS client subnet so that it does not store SERVFAIL in the
+      global cache after a failed lookup, such as timeouts.  A failure entry is
+      stored in the subnet cache, for the query name, for a couple of seconds.
+      Queries can continue to use the subnet cache during that time.
+    o Fix to allow the control-interface config to use ip@port notation.
+    o Fix to check for invalid http content length and chunk size, and to check
+      the RR rdata field lengths when decompressing and inserting RRs from
+      an authority zone transfer.  This stops large memory use and heap
+      buffer-overflow read errors.
+    o Fix to ignore out-of-zone DNAME records for CNAME synthesis.
+      Fix so that a reload checks if the files have changed, and if so, reload
+      the contexts.  Also for DoH, DoQ and outgoing DoT.
+    o Apply cache TTL policy to DNAME and synthesized CNAME on wire path.
+    o Fix for DNS Rebinding Bypass via SVCB/HTTPS Records in Unbound.
+    o Allow synthesized DNAME TTL=0 to be served from cache within grace
+      period.  The responses are served from cache within a 1-second grace
+      period.  Reduces recursion when authoritative servers return DNAME with
+      TTL=0 (RFC 2308).  Response still returns TTL=0 to clients.
+    o On Linux systems log the system-wide unique thread ID instead of
+      Unbound's internal thread counter.
+    o Introduce the 'log-thread-id' configuration option to manage logging the
+      system-wide Linux thread ID for easier debugging with system tools.
+    o Mesh reply counters.  This adds statistics num.queries.replyaddr_limit
+      and requestlist.current.replies.
+    o Add extra statistic to track the number of signature validation
+      operations.  Adds 'num.valops' to extended statistics.
+    o Fix for cname chain length with qtype ANY and qname minimisation.
+    o Change default for so-sndbuf to 4m, to mitigate a cross-layer issue where
+      the UDP socket send buffers are exhausted waiting for ARP/NDP resolution.
+    o Increase default to `num-queries-per-thread: 2048`, when unbound is
+      compiled with libevent.  It makes saturation of the task queue more
+      resource intensive and less practical.
+    o DNS Error Reporting (RFC 9567).  Introduces new configuration option
+      'dns-error-reporting' and new statistics for 'num.dns_error_reports'.
+    o Redis read-only replica support.  Introduces new 'redis-replica-*'
+      options for the Redis cache backend.
+    o Exempt loopback addresses from wait-limit.
+    o Fix wait-limit-netblock and wait-limit-cookie-netblock config parse
+      to allow two arguments.
+    o Fast Reload.  The unbound-control fast_reload is added.  It reads
+      changed config in a thread, then only briefly pauses the service threads,
+      that keep running.  DNS service is only interrupted briefly.
+    o Make the default value of module-config "validator iterator" regardless
+      of compilation options.  --enable-subnet would implicitly change the
+      value to enable the subnetcache module by default in the past.
+    o Add unbound members group access to control key.
+    o Add resolver.arpa and service.arpa to the default locally served zones.
+    o Use TCP_NODELAY on TLS sockets to speed up the TLS handshake.
+    o Serve expired cache update fixes.  Fixes a regression bug with
+      serve-expired that appeared in 1.22.0 and would not allow the iterator
+      to update the cache with not-yet-validated entries resulting in increased
+      outgoing traffic.  Closes: #1142539
+    o The default value of serve-expired-ttl is set to 86400 (1 day)
+      as suggested by RFC8767.
+    o Increase the default of max-global-quota to 200 from 128 after
+      operational feedback.  Still keeping the possible amplification factor
+      (CAMP related issues) in the hundreds.
+    o Fix for the serve expired DNSSEC information fix, it would not allow
+      current delegation information be updated in cache.  The fix allows
+      current delegation and validation recursion information to be updated,
+      but as a consequence no longer has certain expired information around
+      for later dnssec valid expired responses.
+    o Statistics for discard-timeout and wait-limit.
+
+  * Other packaging changes:
+   - d/rules,d/libunbound-dev.install: drop static library and deps
+     (Closes: #1096189)
+   - unbound-helper: do not update resolvconf if it is systemd-resolved
+   - d/unbound.service: set empty DAEMON_OPTS= to avoid warning from systemd
+   - d/upstream/signing-key.asc: update with the new upstream key
+   - d/unbound.conf.d/remote-control.conf: fix typo
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 17 Sep 2026 11:55:59 +0300
+
+unbound (1.22.0-2+deb13u3) trixie-security; urgency=medium
+
+  * May-2026 security updates in debian/patches/26-05/ subdir:
+    01-Use-the-same-EDE-removal-logic-when-encoding-errors.patch
+      this change was part of 1.25 release, it is a slight change in behaviour
+      implemented after 1.22.0 release.  This change is not necessary for the
+      security update, but it makes subsequent changes in this area to apply.
+    02-CVE-2026-33278-Possible-RCU-in-DNSSEC-validation.patch
+    03-CVE-2026-42944-Heap-overflow-multiple-nsid-cookie-padding.patch
+    04-CVE-2026-42959-Crash-DNSSEC-validation-of-malicious-content.patch
+    05-CVE-2026-32792-Packet-of-death-with-DNSCrypt.patch
+    06-CVE-2026-40622-Ghost-domain-name-variant.patch
+       (patch edited, expanded TTL_IS_EXPIRED() macro not present in 1.22)
+    07-CVE-2026-41292-Parsing-a-long-list-of-incoming-EDNS-options.patch
+    08-CVE-2026-42534-Jostle-logic-bypass-degrades-performance.patch
+    09-CVE-2026-42923-Degradation-of-service-unbouded-NSEC-hash-calc.patch
+    10-CVE-2026-42960-Possible-cache-poisoning-following-delegation.patch
+    11-CVE-2026-44390-Unbounded-name-compression.patch
+    12-CVE-2026-44608-UAF-in-RPZ-code.patch
+    13-Unit-test-for-CVE-2026-33278.patch
+    14-Unit-test-for-CVE-2026-42944.patch
+    15-Unit-test-for-CVE-2026-42959.patch
+    16-Unit-test-for-CVE-2026-40622.patch
+    17-Unit-test-for-CVE-2026-42960.patch
+    (Closes: #1137187)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Mon, 25 May 2026 12:05:38 +0300
+
+unbound (1.22.0-2+deb13u2) trixie; urgency=medium
+
+  * two patches from upstream to avoid ssl handshake to root NSes:
+      1247-forward-first-ssl-handshake-failed-on-root-nameservers.patch
+      1247-turn-off-fetch-policy-for-delegation-when.patch
+    (Closes: #1129922)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Sun, 15 Mar 2026 16:38:29 +0300
+
+unbound (1.22.0-2+deb13u1) trixie-security; urgency=high
+
+  [ Guilhem Moulin ]
+  * Fix CVE-2025-11411: Cache poisoning vulnerability via NS RRSet injection
+  * debian/salsa-ci.yml: Disable reprotest and lintian jobs, set RELEASE=trixie
 
   [ Michael Tokarev ]
-  * new upstream release
-  * replace-deprecated-function-by-new-action.patch: remove
-  * d/unbound.service: set empty DAEMON_OPTS= to avoid warning from systemd
-  * unbound-helper: do not update resolvconf if it is systemd-resolved
-    (Closes: #1106186)
-  * d/upstream/signing-key.asc: update with the new upstream key
+  * CVE-2025-11411-additional-nodata.patch -- additional fixes
+    for CVE-2025-11411 (Closes: #1121446, CVE-2025-11411)
+  * d/gbp.conf: set default branch to debian/trixie
 
-  [ Luca Boccassi ]
-  * Install and use sysusers.d/tmpfiles.d config files
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 05 May 2026 15:45:07 +0300
-
-unbound (1.24.2-1) unstable; urgency=medium
-
-  * new upstream security release:
-    Additional fix for CVE-2025-11411 (possible domain hijacking attack),
-    to include YXDOMAIN and non-referral nodata answers in the mitigation
-    as well, reported by TaoFei Guo from Peking University, Yang Luo
-    and JianJun Chen from Tsinghua University.
-    Closes: #1121446, CVE-2025-11411
-  * debian/upstream/signing-key.asc: merge two separate parts into one
-    (keeping the same two keys)
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 26 Nov 2025 22:59:06 +0300
-
-unbound (1.24.1-2) unstable; urgency=medium
-
-  * replace-deprecated-function-by-new-action.patch:
-    fix build with new SWIG 4.4.0 (fix from upstream)
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 30 Oct 2025 14:18:08 +0300
-
-unbound (1.24.1-1) unstable; urgency=medium
-
-  [ MichaIng ]
-  * d/unbound.conf.d/remote-control.conf: fix typo
-
-  [ Michael Tokarev ]
-  * d/upstream/signing-key.asc: add Yorgos Thessalonikefs key
-    (CFF3 344D 9087 A490)
-  * new upstream security/bugfix release
-    Closes: CVE-2025-11411 (possible domain hijacking attack)
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 22 Oct 2025 13:41:36 +0300
-
-unbound (1.24.0-2) unstable; urgency=medium
-
-  * d/tests/runzones: set so-sndbuf to 0
-    unbound tries to set it to a large(ish) value which is not allowed
-    for a non-root.  And unbound complains to stderr, causing test failure.
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 23 Sep 2025 17:40:14 +0300
-
-unbound (1.24.0-1) unstable; urgency=medium
-
-  * new upstream release
-  * d/rules,d/libunbound-dev.install: drop static library and deps
-    (Closes: #1096189)
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 18 Sep 2025 20:55:14 +0300
-
-unbound (1.23.1-1) unstable; urgency=medium
-
-  * new upstream release
-  * d/apparmor-profile: remove sssd path which is in apparmor base
-    for a very long time
-  * Fix-RebirthDay-Attack-CVE-2025-5994.patch: remove
-
- -- Michael Tokarev <mjt@tls.msk.ru>  Sun, 24 Aug 2025 12:37:28 +0300
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 26 Nov 2025 23:12:47 +0300
 
 unbound (1.22.0-2) unstable; urgency=medium
 

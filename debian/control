@@ -10,7 +10,6 @@ Build-Depends:
  autoconf,
  bison,
  dh-apparmor <!pkg.unbound.libonly>,
- dh-sequence-installsysusers <!pkg.unbound.libonly>,
  dh-sequence-python3 <!pkg.unbound.libonly>,
  dpkg-dev (>= 1.16.1~),
  flex,
@@ -82,6 +81,7 @@ Package: unbound
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends:
+ adduser,
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
