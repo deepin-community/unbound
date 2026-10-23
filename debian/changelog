@@ -16,6 +16,10 @@ unbound (1.25.1-1deepin28) unstable; urgency=medium
     migration can lead to use-after-free on multi-threaded deployments.
     Upstream: https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-
     97206.diff
+  * fix(cve): CVE-2026-35501 (unknown) - Fix CVE-2026-35501, Bypass of a
+    configured island trust anchor underneath an insecure parent from an
+    attacker-controlled NSEC record   Upstream:
+    https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-35501.diff
 
  -- deepin-ci-robot <packages@deepin.org>  Fri, 18 Sep 2026 02:06:49 +0800
 
