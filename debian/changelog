@@ -8,6 +8,10 @@ unbound (1.25.1-1deepin28) unstable; urgency=medium
   * fix(cve): CVE-2026-77955 (medium) - Fix CVE-2026-77955, Possible
     ZONEMD verification bypass window.   Upstream:
     https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-77955.diff
+  * fix(cve): CVE-2026-109125 (unknown) - Fix CVE-2026-109125, Possible
+    cache poisoning vulnerability via a cache side-channel exposed by
+    'unwanted-reply-threshold'.   Upstream:
+    https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-109125.diff
 
  -- deepin-ci-robot <packages@deepin.org>  Fri, 18 Sep 2026 02:06:49 +0800
 
