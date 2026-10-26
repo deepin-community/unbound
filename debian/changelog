@@ -1,3 +1,30 @@
+unbound (1.26.1-0+deb13u1deepin1) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-109125 (unknown) - Fix CVE-2026-109125, possible
+    cache poisoning vulnerability via a cache side-channel exposed by
+    'unwanted-reply-threshold'. When the threshold is reached the pending
+    upstream UDP queries on that source port are now dropped along with the
+    cache clear, so the port can no longer be probed from the outside.
+    Upstream:
+    https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-109125.diff
+  * fix(cve): CVE-2026-97206 (unknown) - Fix CVE-2026-97206, DoQ
+    path-migration can lead to use-after-free on multi-threaded
+    deployments. Look up and lock the DoQ connection before removing the
+    mesh state, and do not remove it twice from inside callbacks.
+    Upstream: https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-97206.diff
+  * fix(cve): CVE-2026-35501 (unknown) - Fix CVE-2026-35501, bypass of a
+    configured island trust anchor underneath an insecure parent from an
+    attacker-controlled NSEC record. A forged NSEC insecure response can no
+    longer be accepted and cached without RRSIG validation.
+    Upstream: https://nlnetlabs.nl/downloads/unbound/patch_CVE-2026-35501.diff
+  * Consolidated the outstanding CVE fix PRs into a single branch. The
+    fixes for CVE-2026-77860, CVE-2026-78227, CVE-2026-80225,
+    CVE-2026-82720 and CVE-2026-77955 are already part of the 1.26.1
+    upstream release imported in this package, so the stale patch files
+    for them were dropped instead of being applied a second time.
+
+ -- hudeng <hudeng@deepin.org>  Mon, 26 Oct 2026 09:56:00 +0800
+
 unbound (1.26.1-0+deb13u1) trixie-security; urgency=medium
 
   * New upstream release fixing numerous security and other issues and contains
