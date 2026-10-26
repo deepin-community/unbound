@@ -27,6 +27,11 @@ unbound (1.26.1-0+deb13u1deepin1) unstable; urgency=medium
     service   Upstream:
     https://github.com/NLnetLabs/unbound/commit/7efed803558daed6ff6ba835
     d53c1362232b01ea
+  * fix(cve): CVE-2026-50106 (unknown) - Fix CVE-2026-50106, Possible
+    insecure NXDOMAIN for non-existing records under a configured island
+    trust anchor underneath an insecure parent   Upstream:
+    https://github.com/NLnetLabs/unbound/commit/a42b89f7a608f7badbd81233
+    8702a0b2d77d5bcc.patch
 
  -- hudeng <hudeng@deepin.org>  Mon, 26 Oct 2026 09:56:00 +0800
 
