@@ -22,6 +22,11 @@ unbound (1.26.1-0+deb13u1deepin1) unstable; urgency=medium
     CVE-2026-82720 and CVE-2026-77955 are already part of the 1.26.1
     upstream release imported in this package, so the stale patch files
     for them were dropped instead of being applied a second time.
+  * fix(cve): CVE-2026-96405 (unknown) - Fix CVE-2026-96405, Aggregate
+    DNS name chained pointer decompression work leads to degradation of
+    service   Upstream:
+    https://github.com/NLnetLabs/unbound/commit/7efed803558daed6ff6ba835
+    d53c1362232b01ea
 
  -- hudeng <hudeng@deepin.org>  Mon, 26 Oct 2026 09:56:00 +0800
 
